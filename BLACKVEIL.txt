@@ -1,0 +1,2387 @@
+local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local function notify(title, text, duration)
+    StarterGui:SetCore("SendNotification", {
+        Title = title,
+        Text = text,
+        Duration = duration
+    })
+end
+
+if not game:IsLoaded() then
+    notify("Please Wait", "Game is still loading...", 10)
+    game.Loaded:Wait()
+end
+
+if not player.Character then
+    notify("Please Wait", "Character is not ready yet...", 10)
+    player.CharacterAdded:Wait()
+end
+
+if makefolder and not isfolder("BLACKVEIL") then
+    makefolder("BLACKVEIL")
+end
+
+
+
+
+
+
+
+
+
+
+
+local ToggleUI = "toggle-right"
+local keyToggle = true
+local version = 18.2
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local newupdate = [[
++ New AntiKick
++ New Font
+- Fix bug
+]]
+
+local KeyLifetimer = ""
+local KeyLeft = ""
+local KeyExpiry = ""
+local MCPTOGGLE = false
+
+print("AntiKick loaded")
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local mt = getrawmetatable and getrawmetatable(game)
+if mt then
+	local oldNamecall = mt.__namecall
+	setreadonly(mt, false)
+	mt.__namecall = newcclosure(function(self, ...)
+		local method = getnamecallmethod()
+		if method == "Kick" and self == player then
+			warn("[CodeAntiKick] Blocked Kick on LocalPlayer")
+			return
+		end
+		return oldNamecall(self, ...)
+	end)
+	setreadonly(mt, true)
+else
+	local success = pcall(function()
+		player.Kick = function()
+			warn("[CodeAntiKick] Blocked Kick on LocalPlayer")
+		end
+	end)
+	if not success then
+		warn("[CodeAntiKick] Could not hook Kick (no metatable access)")
+	end
+end
+
+local function protectConnection(connection)
+	if typeof(connection) == "ScriptConnection" then
+		pcall(function()
+			connection.Disconnect = function() end
+		end)
+	end
+end
+
+local function hookRemote(remote)
+	if remote:IsA("RemoteEvent") then
+		pcall(function()
+			remote.OnClientEvent:Connect(function(...)
+				local args = { ... }
+				for _, v in ipairs(args) do
+					if type(v) == "string" and (v:lower():find("kick") or v:lower():find("ban")) then
+						warn("[CodeAntiKick] Blocked suspicious remote payload")
+						return
+					end
+				end
+			end)
+		end)
+	end
+end
+
+for _, obj in ipairs(game:GetDescendants()) do
+	hookRemote(obj)
+end
+
+game.DescendantAdded:Connect(hookRemote)
+
+player.AncestryChanged:Connect(function(_, parent)
+	if not parent then
+		warn("[CodeAntiKick] Player removed from DataModel, attempting to re-add")
+		pcall(function()
+			player.Parent = Players
+		end)
+	end
+end)
+
+pcall(function()
+	local networkClient = game:GetService("NetworkClient")
+	if networkClient then
+		networkClient.Disconnect = function()
+			warn("[CodeAntiKick] Blocked Disconnect")
+		end
+	end
+end)
+
+print("[AntiKick] Protection active")
+
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+
+local LocalPlayer = Players.LocalPlayer
+
+local HttpService = game:GetService("HttpService")
+local StarterGui = game:GetService("StarterGui")
+
+local function Notify(text)
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = "Config Error",
+            Text = text,
+            Duration = 3
+        })
+    end)
+end
+
+local function Savex(filename, data)
+    local ok, encoded = pcall(function()
+        return HttpService:JSONEncode(data)
+    end)
+
+    if not ok then
+        Notify("Invalid data")
+        return false
+    end
+
+    local success = pcall(function()
+        writefile(filename .. ".json", encoded)
+    end)
+
+    if not success then
+        Notify("Failed to save file")
+        return false
+    end
+
+    return true
+end
+
+local function Loadx(filename)
+    local path = filename .. ".json"
+
+    if not isfile(path) then
+        return nil
+    end
+
+    local ok, data = pcall(function()
+        return HttpService:JSONDecode(readfile(path))
+    end)
+
+    if not ok or type(data) ~= "table" then
+        Notify("Invalid or corrupted file")
+        return nil
+    end
+
+    return data
+end
+
+local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
+local player = Players.LocalPlayer
+
+local ADMIN_NAME = "bysuskhmer"
+
+local isAdmin = player.Name == ADMIN_NAME
+
+local TypeUser = admin and "Admin" or "Player"
+
+local Players = game:GetService("Players")
+local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+getgenv().PartName = ""
+getgenv().loopW = false
+getgenv().loopJ = false
+getgenv().InfJ = false
+local HttpService = game:GetService("HttpService")
+local LogoID = "rbxassetid://000"
+local backgroundID = "rbxassetid://000"
+
+
+if typeof(firetouchinterest) ~= "function" then
+    warn("firetouchinterest not supported")
+    local StarterGui = game:GetService("StarterGui")
+
+StarterGui:SetCore("SendNotification", {
+    Title = "firetouchinterest",
+    Text = "firetouchinterest not supported",
+    Duration = 10,
+})
+    return
+end
+
+local Players = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
+
+local premium = false
+local player = Players.LocalPlayer
+local gamepassID = 1963837218
+
+
+local function checkGamepass()
+    local success, hasPass = pcall(function()
+        return MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamepassID)
+    end)
+
+    if success then
+        if hasPass then
+            premium = true
+        else
+            premium = false
+        end
+    else
+        warn(" Failed to check Gamepass: " .. tostring(hasPass))
+    end
+end
+
+checkGamepass()
+
+
+local lock = not premium
+
+local function GuiVEIL()
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+
+local Window = WindUI:CreateWindow({
+    Title = "BLACK VEIL",
+    Icon = "zap",
+    Author = "by .zorx",
+    BackgroundImageTransparency = 0.42,
+    Background = "https://raw.githubusercontent.com/t26sd8nmgg-ship-it/Background-image/refs/heads/main/IMG_0736.jpeg",
+    
+    Topbar = {
+		Height = 44,
+		ButtonsType = "Mac",
+	},
+})
+
+
+Window:Tag({
+    Title = TypeUser,
+    Icon = "octagon-alert",
+    Color = Color3.fromHex("#30ff6a"),
+    Radius = 13,
+})
+
+Window:EditOpenButton({
+    Title = "Open Example UI",
+    Icon = "monitor",
+    CornerRadius = UDim.new(0,16),
+    StrokeThickness = 2,
+    Color = ColorSequence.new( -- gradient
+        Color3.fromHex("FF0F7B"), 
+        Color3.fromHex("F89B29")
+    ),
+    OnlyMobile = false,
+    Enabled = false,
+    Draggable = false,
+})
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "MyToggleGui"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = playerGui
+gui.DisplayOrder = 999
+
+-- =========================
+-- Image Button
+-- =========================
+
+local button = Instance.new("ImageButton")
+button.Name = "ToggleButton"
+button.Size = UDim2.fromOffset(50, 50)
+button.Position = UDim2.new(0, 25, 0.5, -35)
+
+button.BackgroundTransparency = 1
+button.BorderSizePixel = 0
+button.AutoButtonColor = false
+
+button.Image = "rbxassetid://99916490350946"
+button.ScaleType = Enum.ScaleType.Fit
+
+-- Stroke
+local stroke = Instance.new("UIStroke")
+stroke.Thickness = 2
+stroke.Transparency = 0
+stroke.Parent = button
+
+button.Parent = gui
+
+task.spawn(function()
+    local hue = 0
+
+    while button.Parent do
+        hue = (hue + 0.005) % 1
+        stroke.Color = Color3.fromHSV(hue, 1, 1)
+        task.wait(0.03)
+    end
+end)
+
+-- =========================
+-- Make Image Circular
+-- =========================
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(1, 0)
+corner.Parent = button
+
+-- =========================
+-- Settings
+-- =========================
+
+local IMAGE_OFF = "rbxassetid://102815775006103"
+local IMAGE_ON = "rbxassetid://102815775006103"
+
+local HOLD_TIME = 0.5
+
+local isToggled = false
+local isHolding = false
+local holdStartTime = 0
+local connection = nil
+
+local function startHold()
+
+	if isHolding then
+		return
+	end
+
+	isHolding = true
+	holdStartTime = tick()
+
+	TweenService:Create(
+		button,
+		TweenInfo.new(HOLD_TIME),
+		{
+			ImageTransparency = 0.4
+		}
+	):Play()
+
+	connection = RunService.Heartbeat:Connect(function()
+
+		if isHolding and tick() - holdStartTime >= HOLD_TIME then
+
+			setToggleState(not isToggled)
+
+			isHolding = false
+
+			if connection then
+				connection:Disconnect()
+				connection = nil
+			end
+
+			TweenService:Create(
+				button,
+				TweenInfo.new(0.15),
+				{
+					ImageTransparency = 0
+				}
+			):Play()
+
+		end
+
+	end)
+
+end
+
+local function cancelHold()
+
+	if not isHolding then
+		return
+	end
+
+	isHolding = false
+
+	if connection then
+		connection:Disconnect()
+		connection = nil
+	end
+
+	TweenService:Create(
+		button,
+		TweenInfo.new(0.15),
+		{
+			ImageTransparency = 0
+		}
+	):Play()
+
+end
+
+-- =========================
+-- Drag System
+-- =========================
+
+local dragging = false
+local dragStart
+local startPosition
+
+button.InputBegan:Connect(function(input)
+
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
+
+		dragging = true
+
+		dragStart = input.Position
+		startPosition = button.Position
+
+		startHold()
+
+	end
+
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+
+	if not dragging then
+		return
+	end
+
+	if input.UserInputType == Enum.UserInputType.MouseMovement
+		or input.UserInputType == Enum.UserInputType.Touch then
+
+		local delta = input.Position - dragStart
+
+		button.Position = UDim2.new(
+			startPosition.X.Scale,
+			startPosition.X.Offset + delta.X,
+
+			startPosition.Y.Scale,
+			startPosition.Y.Offset + delta.Y
+		)
+
+	end
+
+end)
+
+button.InputEnded:Connect(function(input)
+
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
+
+		dragging = false
+
+		cancelHold()
+
+	end
+
+end)
+
+-- =========================
+-- Start
+
+button.MouseButton1Click:Connect(function()
+    Window:Toggle()
+end)
+-- =========================
+
+Window:DisableTopbarButtons({
+    "Close", 
+    "Minimize", 
+    "Fullscreen",
+})
+------ FUNCTION REQUEST ---------
+
+local function noti(title, content, duration)
+    WindUI:Notify({
+        Title = title or "",
+        Content = content or "",
+        Duration = duration or 5,
+    })
+end
+
+local URL = ""
+
+function run(scriptUrl)
+    local HttpService = game:GetService("HttpService")
+    local urlLower = scriptUrl:lower()
+    local typescript = "Unknown"
+
+    if string.find(urlLower, "github") then
+        typescript = "Github"
+    elseif string.find(urlLower, "pastebin") then
+        typescript = "Pastebin"
+    elseif string.find(urlLower, "gist") then
+        typescript = "Gist"
+    elseif string.find(urlLower, "hastebin") then
+        typescript = "Hastebin"
+    elseif string.find(urlLower, "ghostbin") then
+        typescript = "Ghostbin"
+    elseif string.find(urlLower, "controlc") then
+        typescript = "ControlC"
+    elseif string.find(urlLower, "rentry") then
+        typescript = "Rentry"
+    elseif string.find(urlLower, "sourcebin") then
+        typescript = "SourceBin"
+    elseif string.find(urlLower, "pastie") then
+        typescript = "Pastie"
+    elseif string.find(urlLower, "haste.host") then
+        typescript = "HasteHost"
+    elseif string.find(urlLower, "safetycode") then
+        typescript = "SafetyCode-API"
+    end
+
+    WindUI:Notify({
+        Title = "Script Run Please Wait",
+        Content = "Wait",
+        Duration = 5,
+    })
+
+    local startTime = os.clock()
+
+    local success, err = pcall(function()
+        local data = game:HttpGet(scriptUrl)
+
+        local isJson, parsed = pcall(function()
+            return HttpService:JSONDecode(data)
+        end)
+
+        if isJson and parsed.code then
+            loadstring(parsed.code)()
+        else
+            loadstring(data)()
+        end
+    end)
+
+    local endTime = os.clock()
+    local elapsedTime = string.format("%.2f", endTime - startTime)
+
+    if success then
+        WindUI:Notify({
+            Title = "Script Successful",
+            Content = "Time Script done: " .. elapsedTime .. "s",
+            Duration = 5,
+        })
+    else
+        WindUI:Notify({
+            Title = "Script Error",
+            Content = "Error: " .. err .. "/Timer : " .. elapsedTime .. "s",
+            Duration = 5,
+        })
+    end
+end
+
+function rungit(name)
+run("https://raw.githubusercontent.com/bysuskhmerofficial/HelloKitty/refs/heads/main/" .. name)
+end
+
+local color = {
+    Red = Color3.fromHex("#FF0000"),
+    Green = Color3.fromHex("#00FF00"),
+    Blue = Color3.fromHex("#0000FF"),
+
+    White = Color3.fromHex("#FFFFFF"),
+    Black = Color3.fromHex("#000000"),
+    Gray = Color3.fromHex("#808080"),
+
+    Yellow = Color3.fromHex("#FFFF00"),
+    Orange = Color3.fromHex("#FFA500"),
+    Purple = Color3.fromHex("#800080"),
+    Pink = Color3.fromHex("#FF69B4"),
+
+    Cyan = Color3.fromHex("#00FFFF"),
+    Magenta = Color3.fromHex("#FF00FF"),
+
+    Lime = Color3.fromHex("#32CD32"),
+    Brown = Color3.fromHex("#8B4513"),
+    Gold = Color3.fromHex("#FFD700"),
+    Silver = Color3.fromHex("#C0C0C0"),
+
+    Navy = Color3.fromHex("#000080"),
+    Teal = Color3.fromHex("#008080"),
+    Maroon = Color3.fromHex("#800000"),
+    Olive = Color3.fromHex("#808000"),
+
+    SkyBlue = Color3.fromHex("#87CEEB"),
+    DeepBlue = Color3.fromHex("#0064FF"),
+    DarkRed = Color3.fromHex("#8B0000"),
+    DarkGreen = Color3.fromHex("#006400"),
+    DarkPurple = Color3.fromHex("#4B0082"),
+
+    LightRed = Color3.fromHex("#FF6464"),
+    LightGreen = Color3.fromHex("#64FF64"),
+    LightBlue = Color3.fromHex("#6496FF"),
+    LightPurple = Color3.fromHex("#C864FF"),
+}
+
+local Playersction = Window:Section({
+    Title = "Player",
+    Icon = "user-round",
+    IconColor = color.Red,
+    IconShape = "Square",
+    Opened = false,
+})
+
+local p2 = Window:Section({
+    Title = "Tools",
+    Icon = "shield-off",
+    IconColor = color.Pink,
+    IconShape = "Square",
+    Opened = false,
+})
+
+local p3 = Window:Section({
+    Title = "Premium",
+    Icon = "circle-star",
+    IconColor = color.Blue,
+    IconShape = "Square",
+    Opened = false,
+})
+
+------- TAB AND SCRIPT TAB1---------
+
+local t1 = Playersction:Tab({
+    Title = "Main",
+    Icon = "shield-half",
+    Locked = false,
+})
+
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+
+local player = Players.LocalPlayer
+
+-- Rejoin Server
+local function rejoinServer()
+    TeleportService:TeleportToPlaceInstance(
+        game.PlaceId,
+        game.JobId,
+        player
+    )
+end
+
+-- Profile Image
+local avatar = select(1, Players:GetUserThumbnailAsync(
+    player.UserId,
+    Enum.ThumbnailType.HeadShot,
+    Enum.ThumbnailSize.Size100x100
+))
+
+local infoyouss = t1:Paragraph({
+Title = "You Information",
+Desc =
+player.Name ..
+"\nUser ID: " .. player.UserId ..
+"\nAccount Age: " .. player.AccountAge .. " Days",
+
+Image = avatar,  
+ImageSize = 100,  
+
+Color = Color3.fromRGB(100, 200, 255),  
+
+Buttons = {  
+    {  
+        Title = "Rejoin Server",  
+        Icon = "check",  
+
+        Callback = function()  
+            rejoinServer()  
+        end  
+    }  
+}
+
+})
+
+local Section = t1:Section({ 
+    Title = "Settings",
+    TextXAlignment = "Left",
+    TextSize = 17, -- Default Size
+})
+
+local function getSavedFont()
+    local success, result = pcall(function()
+        if isfile("font_save.txt") then
+            return readfile("font_save.txt")
+        end
+    end)
+    if success and result then
+        return result
+    end
+    return "Builder Mono" -- Default font for new users
+end
+
+local function saveFont(fontName)
+    local success, err = pcall(function()
+        writefile("font_save.txt", fontName)
+        getgenv().SavedFont = fontName
+    end)
+    if not success then
+        warn("Failed to save font: " .. err)
+    end
+end
+
+local function applyFont(fontName)
+    if fontName == "Silkscreen" then
+        WindUI:SetFont("rbxassetid://12187371840")
+    elseif fontName == "Antonio" then
+        WindUI:SetFont("rbxassetid://122516982241677")
+    elseif fontName == "Jolly Lodger" then
+        WindUI:SetFont("rbxassetid://77368255811694")
+    elseif fontName == "Blaka" then
+        WindUI:SetFont("rbxassetid://12187365104")
+    elseif fontName == "Builder Sans" then
+        WindUI:SetFont("rbxassetid://16658221428")
+    elseif fontName == "Builder Mono" then
+        WindUI:SetFont("rbxassetid://16658246179")
+    elseif fontName == "Kanit" then
+        WindUI:SetFont("rbxassetid://12187373592")
+    end
+end
+
+local currentFont = getSavedFont()
+applyFont(currentFont)
+
+local DropdownFont = t1:Dropdown({
+    Title = "Select Font",
+    Values = {
+        "Silkscreen",
+        "Antonio",
+        "Jolly Lodger",
+        "Blaka",
+        "Builder Sans",
+        "Builder Mono",
+        "Kanit"
+    },
+    Value = currentFont, -- Auto-load saved font or default
+    Callback = function(selected)
+        applyFont(selected)
+        saveFont(selected) -- Auto-save
+    end
+})
+
+-- Optional: Also sync with environment variable if it exists
+if getgenv().SavedFont and getgenv().SavedFont ~= currentFont then
+    -- If environment has different font, use it
+    currentFont = getgenv().SavedFont
+    applyFont(currentFont)
+    DropdownFont:SetValue(currentFont)
+end
+
+
+
+Window:SelectTab(1) 
+
+local Section = t1:Section({ 
+    Title = "Update, Info",
+    TextXAlignment = "Left",
+    TextSize = 17, -- Default Size
+})
+
+local Code = t1:Code({
+    Title = "New Updates : " ..version,
+    Code = newupdate
+})
+
+
+local HttpService = game:GetService("HttpService")
+
+-- =========================
+-- Theme Save Settings
+-- =========================
+
+
+
+-------- TAB 2 -----------
+
+local t2 = Playersction:Tab({
+    Title = "Local Player",
+    Icon = "user",
+    Locked = false,
+})
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:FindFirstChildOfClass("Humanoid")
+local hrp = character:FindFirstChild("HumanoidRootPart")
+
+if not humanoid then
+    warn("[❌] Humanoid not found.")
+end
+if not hrp then
+    warn("[❌] HumanoidRootPart not found.")
+end
+
+-- Settings
+getgenv().loopW = false
+getgenv().loopJ = false
+getgenv().InfJ = false
+
+local speed = humanoid and humanoid.WalkSpeed or 16
+local jump = humanoid and humanoid.JumpPower or 50
+
+-- Input Speed
+t2:Input({
+    Title = "Enter Your Speed",
+    Desc = "Walkspeed Value",
+    Value = speed,
+    Placeholder = "Enter speed...",
+    Callback = function(val)
+        local n = tonumber(val)
+        if n and humanoid then
+            speed = n
+            humanoid.WalkSpeed = speed
+        end
+    end
+})
+
+-- Toggle Walk Loop
+t2:Toggle({
+    Title = "Loop Speed",
+    Desc = "Auto maintain WalkSpeed",
+    Default = false,
+    Callback = function(v)
+        getgenv().loopW = v
+    end
+})
+
+-- Input Jump
+t2:Input({
+    Title = "Enter Your Jump",
+    Desc = "JumpPower Value",
+    Value = jump,
+    Placeholder = "Enter jump power...",
+    Callback = function(val)
+        local n = tonumber(val)
+        if n and humanoid then
+            jump = n
+            humanoid.JumpPower = jump
+        end
+    end
+})
+
+-- Toggle Jump Loop
+t2:Toggle({
+    Title = "Loop Jump",
+    Desc = "Auto maintain JumpPower",
+    Default = false,
+    Callback = function(v)
+        getgenv().loopJ = v
+    end
+})
+
+-- Infinite Jump
+UserInputService.JumpRequest:Connect(function()
+    if getgenv().InfJ then
+        local c = player.Character
+        local h = c and c:FindFirstChildOfClass("Humanoid")
+        if h then
+            h:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
+    end
+end)
+
+t2:Toggle({
+    Title = "Infinite Jump",
+    Desc = "Jump anytime",
+    Default = false,
+    Callback = function(v)
+        getgenv().InfJ = v
+    end
+})
+
+-- Loops
+local speedLoop, jumpLoop
+
+local function bindLoops(char)
+    humanoid = char:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return end
+
+    if speedLoop then speedLoop:Disconnect() end
+    if jumpLoop then jumpLoop:Disconnect() end
+
+    speedLoop = RunService.Heartbeat:Connect(function()
+        if getgenv().loopW then
+            pcall(function()
+                humanoid.WalkSpeed = speed
+            end)
+        end
+    end)
+
+    jumpLoop = RunService.Heartbeat:Connect(function()
+        if getgenv().loopJ then
+            pcall(function()
+                humanoid.JumpPower = jump
+            end)
+        end
+    end)
+end
+
+if player.Character then bindLoops(player.Character) end
+player.CharacterAdded:Connect(bindLoops)
+
+-- Noclip
+local noclipLoop
+local Clip = true
+
+local function noclip()
+    Clip = false
+    if noclipLoop then noclipLoop:Disconnect() end
+    noclipLoop = RunService.Stepped:Connect(function()
+        if not Clip and character then
+            for _, v in ipairs(character:GetDescendants()) do
+                if v:IsA("BasePart") and v.CanCollide then
+                    v.CanCollide = false
+                end
+            end
+        end
+    end)
+end
+
+local function clip()
+    Clip = true
+    if noclipLoop then
+        noclipLoop:Disconnect()
+        noclipLoop = nil
+    end
+end
+
+t2:Toggle({
+    Title = "Noclip",
+    Desc = "Walk through walls",
+    Default = false,
+    Callback = function(v)
+        if v then
+            noclip()
+        else
+            clip()
+        end
+    end
+})
+
+local TpSpeed = 1
+local tpwalkConnection = nil
+
+local Input = t2:Input({
+    Title = "Input Tpwalk",
+    Desc = "TPWalk is a walking method that uses teleportation (TP) to create movement speed. Based on estimation, 1 TPWalk can be roughly equivalent to a walking speed of 40–100.",
+    Value = "1",
+    Type = "Input",
+    Placeholder = "Enter Tpwalkspeed...",
+    Callback = function(text) 
+        local num = tonumber(text)
+        if num then
+            TpSpeed = num
+        end
+    end
+})
+
+local Toggle = t2:Toggle({
+    Title = "Tpwalk Status",
+    Desc = "TPWalk will work in some games that do not have anti-speed or anti-teleport systems.",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state) 
+        local RunService = game:GetService("RunService")
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+
+        if state then
+            tpwalkConnection = RunService.Heartbeat:Connect(function()
+                local chr = player.Character
+                local hum = chr and chr:FindFirstChildOfClass("Humanoid")
+                
+                if hum and hum.MoveDirection.Magnitude > 0 then
+                    chr:TranslateBy(hum.MoveDirection * TpSpeed)
+                end
+            end)
+        else
+            if tpwalkConnection then
+                tpwalkConnection:Disconnect()
+                tpwalkConnection = nil
+            end
+        end
+    end
+})
+
+local stateFly = false
+    local FlySpeed = 25
+
+local Input = t2:Input({
+    Title = "Input Fly Speed",
+    Desc = "Input Fly speed",
+    Value = "25",
+    InputIcon = "",
+    Type = "Input", -- or "Textarea"
+    Placeholder = "Enter Speed Fly...",
+    Callback = function(val) 
+        FlySpeed = val
+    end
+})
+
+local Toggle = t2:Toggle({
+    Title = "Fly Status",
+    Desc = "Fly Status",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(v) 
+        stateFly = v
+if stateFly == false then
+if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") and game.Players.LocalPlayer.Character.Humanoid.RootPart and game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("VelocityHandler") and game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("GyroHandler") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler:Destroy()
+game.Players.LocalPlayer.Character.HumanoidRootPart.GyroHandler:Destroy()
+game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
+end
+end
+while stateFly do
+if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") and game.Players.LocalPlayer.Character.Humanoid.RootPart and game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("VelocityHandler") and game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("GyroHandler") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.MaxForce = Vector3.new(9e9,9e9,9e9)
+game.Players.LocalPlayer.Character.HumanoidRootPart.GyroHandler.MaxTorque = Vector3.new(9e9,9e9,9e9)
+game.Players.LocalPlayer.Character.Humanoid.PlatformStand = true
+game.Players.LocalPlayer.Character.HumanoidRootPart.GyroHandler.CFrame = Workspace.CurrentCamera.CoordinateFrame
+game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.Velocity = Vector3.new()
+if require(game.Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule")):GetMoveVector().X > 0 then
+game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.Velocity = game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.Velocity + game.Workspace.CurrentCamera.CFrame.RightVector * (require(game.Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule")):GetMoveVector().X * FlySpeed)
+end
+if require(game.Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule")):GetMoveVector().X < 0 then
+game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.Velocity = game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.Velocity + game.Workspace.CurrentCamera.CFrame.RightVector * (require(game.Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule")):GetMoveVector().X * FlySpeed)
+end
+if require(game.Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule")):GetMoveVector().Z > 0 then
+game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.Velocity = game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.Velocity - game.Workspace.CurrentCamera.CFrame.LookVector * (require(game.Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule")):GetMoveVector().Z * FlySpeed)
+end
+if require(game.Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule")):GetMoveVector().Z < 0 then
+game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.Velocity = game.Players.LocalPlayer.Character.HumanoidRootPart.VelocityHandler.Velocity - game.Workspace.CurrentCamera.CFrame.LookVector * (require(game.Players.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule")):GetMoveVector().Z * FlySpeed)
+end
+elseif game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") and game.Players.LocalPlayer.Character.Humanoid.RootPart and game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("VelocityHandler") == nil and game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("GyroHandler") == nil then
+local bv = Instance.new("BodyVelocity")
+local bg = Instance.new("BodyGyro")
+
+bv.Name = "VelocityHandler"
+bv.Parent = game.Players.LocalPlayer.Character.HumanoidRootPart
+bv.MaxForce = Vector3.new(0,0,0)
+bv.Velocity = Vector3.new(0,0,0)
+
+bg.Name = "GyroHandler"
+bg.Parent = game.Players.LocalPlayer.Character.HumanoidRootPart
+bg.MaxTorque = Vector3.new(0,0,0)
+bg.P = 1000
+bg.D = 50
+end
+task.wait()
+end
+    end
+})
+
+
+--------- TAB 3 -------------
+
+local t3 = p2:Tab({
+    Title = "Script",
+    Icon = "code",
+    Locked = false,
+})
+
+local function ScriptAdd(title, raw)
+local Button = t3:Button({
+    Title = title,
+    Desc = "Click For To Load Script",
+    Locked = false,
+    Callback = function()
+        run(raw)
+    end
+})
+end
+
+local Section = t3:Section({ 
+    Title = "Script",
+    TextXAlignment = "Left",
+    TextSize = 17, -- Default Size
+})
+
+local Button = t3:Button({
+    Title = "Fly {Fe Gui V3}",
+    Desc = "Click For To Load Script",
+    Locked = false,
+    Callback = function()
+        run("https://vss.pandauth.com/kv/b31ecc7a9bf628ac")
+    end
+})
+ScriptAdd("Unlock Emote", "https://vss.pandauth.com/kv/e90397681f64339f")
+ScriptAdd("ShiftLock", "https://pastebin.com/raw/bKMz1DdF")
+ScriptAdd("Keyboard", "https://raw.githubusercontent.com/Bysuskhmerops62/script-/refs/heads/main/VirtualKeyboard.lua.txt")
+ScriptAdd("Fe Invisible", "https://pastebin.com/raw/3Rnd9rHf")
+ScriptAdd("Fps Boost", "https://raw.githubusercontent.com/UhGbaaaa/Script-Roblox-New/refs/heads/main/Fps%20boost%202024")
+ScriptAdd("Wallhop", "https://raw.githubusercontent.com/aceurss/AcxScripter/refs/heads/main/FakeWallHopScript")
+ScriptAdd("Aimbot", "https://raw.githubusercontent.com/DanielHubll/DanielHubll/refs/heads/main/Aimbot%20Mobile")
+ScriptAdd("Teleport Player", "https://raw.githubusercontent.com/Infinity2346/Tect-Menu/main/Teleport%20Gui.lua")
+ScriptAdd("FE Lag Switch", "https://raw.githubusercontent.com/0Ben1/fe/main/Protected%20-%202023-05-28T225112.055.lua.txt")
+
+
+local Button = t3:Button({
+    Title = "Anti AFK",
+    Desc = "It will run once every minute.",
+    Locked = false,
+    Callback = function()
+        rungit("antiafk.exe")
+    end
+})
+
+
+
+local Button = t3:Button({
+    Title = "Anti Fling",
+    Desc = "Click For To Load Script",
+    Locked = false,
+    Callback = function()
+        rungit("antifling.exe")
+    end
+})
+
+
+
+local Section = t3:Section({ 
+    Title = "SpaceGame",
+    TextXAlignment = "Left",
+    TextSize = 17, -- Default Size
+})
+
+local GravityOriginal = workspace.Gravity
+
+local Slider = t3:Slider({
+    Title = "Gravity",
+    Step = 1,
+    
+    Value = {
+        Min = 0,
+        Max = 1000,
+        Default = GravityOriginal,
+    },
+    Callback = function(value)
+        workspace.Gravity = value
+    end
+})
+
+local Camera = game.Workspace.CurrentCamera
+local PovOriginal = Camera.FieldOfView
+
+local Input = t3:Input({
+    Title = "Fov",
+    Desc = "Input Fov (1 - 120)",
+    Value = tostring(Camera.FieldOfView),
+    InputIcon = "",
+    Type = "Input", -- or "Textarea"
+    Placeholder = "Enter Fov...",
+    Callback = function(input)
+        local num = tonumber(input)
+        if num and num >= 1 and num <= 120 then
+            Camera.FieldOfView = num
+        else
+            warn("Invalid FOV input:", input)
+        end
+    end
+})
+
+local Players = game:GetService("Players")
+local PlrNs = Players.LocalPlayer
+
+local DefaultCameraMode = "Classic" -- fallback default
+
+if PlrNs.CameraMode == Enum.CameraMode.LockFirstPerson then
+    DefaultCameraMode = "LockFirstPerson"
+end
+
+local Dropdown = t3:Dropdown({
+    Title = "CameraMode (Select)",
+    Values = { "Classic", "LockFirstPerson" },
+    Value = DefaultCameraMode,
+    Callback = function(option) 
+        if option == "Classic" then
+            PlrNs.CameraMode = Enum.CameraMode.Classic
+        elseif option == "LockFirstPerson" then
+            PlrNs.CameraMode = Enum.CameraMode.LockFirstPerson
+        end
+    end
+})
+
+local Players = game:GetService("Players")
+local PlrNs = Players.LocalPlayer
+
+local modeToIndex = {
+    UserChoice = 1,
+    Thumbstick = 2,
+    DPad = 3,
+    Thumbpad = 4,
+    ClickToMove = 5,
+    Scriptable = 6,
+}
+
+local currentModeName = PlrNs.DevTouchMovementMode.Name
+local DefaultDexTouchMove = modeToIndex[currentModeName] or 1
+
+local Dropdown = t3:Dropdown({
+    Title = "DevTouchMovementMode (Select)",
+    Values = { "UserChoice", "Thumbstick", "DPad", "Thumbpad", "ClickToMove", "Scriptable" },
+    Value = DefaultDexTouchMove,
+    Callback = function(Value)
+        local enumValue = Enum.DevTouchMovementMode[Value]
+        if enumValue then
+            PlrNs.DevTouchMovementMode = enumValue
+        else
+        
+        end
+    end
+})
+
+local pp = false
+local RunService = game:GetService("RunService")
+-- 🔧 Variable Setup
+local Lighting = game:GetService("Lighting")
+
+-- 💾 Save Original Lighting Settings
+local BrightnessOld = Lighting.Brightness
+local ClockTimeOld = Lighting.ClockTime
+local FogEndOld = Lighting.FogEnd
+local GlobalShadowsOld = Lighting.GlobalShadows
+local OutdoorAmbientOld = Lighting.OutdoorAmbient
+
+-- ⚙️ Function to Apply or Reset Lighting
+local function updateLighting()
+    if pp then
+        -- Enable Full Bright
+        pcall(function()
+            Lighting.Brightness = 2
+            Lighting.ClockTime = 14
+            Lighting.FogEnd = 100000
+            Lighting.GlobalShadows = false
+            Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+        end)
+    else
+        -- Reset to Original
+        pcall(function()
+            Lighting.Brightness = BrightnessOld
+            Lighting.ClockTime = ClockTimeOld
+            Lighting.FogEnd = FogEndOld
+            Lighting.GlobalShadows = GlobalShadowsOld
+            Lighting.OutdoorAmbient = OutdoorAmbientOld
+        end)
+    end
+end
+
+local Toggle = t3:Toggle({
+    Title = "Full Brightness",
+    Desc = "Full Brightness ",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state) 
+        pp = state
+        updateLighting()
+    end
+})
+
+local Player = game.Players.LocalPlayer
+
+local toggleRemoveFogEnd = game.Lighting.FogEnd
+local toggleRemoveFogStart = game.Lighting.FogStart
+local toggleRemoveFogAmbient = game.Lighting.Ambient
+local toggleRemoveFogOutDoors = game.Lighting.OutdoorAmbient
+
+local function ScriptRemoveFog()
+    game.Lighting.FogEnd = math.huge
+    game.Lighting.FogStart = 0
+    game.Lighting.Ambient = Color3.fromRGB(167, 167, 167)
+    game.Lighting.OutdoorAmbient = Color3.fromRGB(167, 167, 167)
+end
+
+local function ScriptRemoveFogReast()
+    game.Lighting.FogEnd = toggleRemoveFogEnd
+    game.Lighting.FogStart = toggleRemoveFogStart
+    game.Lighting.Ambient = toggleRemoveFogAmbient
+    game.Lighting.OutdoorAmbient = toggleRemoveFogOutDoors
+end
+
+local Toggle = t3:Toggle({
+    Title = "Remove Fog",
+    Desc = "Remove Fog ",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state) 
+        if state then
+            ScriptRemoveFog()
+        else
+            ScriptRemoveFogReast()
+        end
+    end
+})
+
+local Toggle = t3:Toggle({
+    Title = "Part Invisible / Show",
+    Desc = "Part Invisible / Show ",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state) 
+        if state then
+            -- Make all BaseParts fully visible (Transparency = 0)
+            for _, descendant in pairs(workspace:GetDescendants()) do
+                if descendant:IsA("BasePart") then
+                    if not descendant:FindFirstChild("OriginalTransparency") then
+                        local originalTransparency = Instance.new("NumberValue")
+                        originalTransparency.Name = "OriginalTransparency"
+                        originalTransparency.Value = descendant.Transparency
+                        originalTransparency.Parent = descendant
+                    end
+                    descendant.Transparency = 0
+                end
+            end
+        else
+            -- Restore original transparency values
+            for _, descendant in pairs(workspace:GetDescendants()) do
+                if descendant:IsA("BasePart") then
+                    local originalTransparency = descendant:FindFirstChild("OriginalTransparency")
+                    if originalTransparency then
+                        descendant.Transparency = originalTransparency.Value
+                    end
+                end
+            end
+        end
+    end
+})
+
+local Section = t3:Section({ 
+    Title = "Script Hub",
+    TextXAlignment = "Left",
+    TextSize = 17, -- Default Size
+})
+
+ScriptAdd("Dhelirium Admin", "https://raw.githubusercontent.com/Dhelann/Dhelirium/refs/heads/main/source.luau")
+
+local Button = t3:Button({
+    Title = "explorer",
+    Desc = "Click For To Load Script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua")
+    end
+})
+
+local Button = t3:Button({
+    Title = "Infinite Yield",
+    Desc = "Click For To Load Script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source")
+    end
+})
+
+local Button = t3:Button({
+    Title = "GhostPlayer",
+    Desc = "There are currently some issues. We’re working on fixing them.",
+    Locked = true,
+    Callback = function()
+        run("https://raw.githubusercontent.com/GhostPlayer352/Test4/main/GhostHub")
+    end
+})
+
+local Button = t3:Button({
+    Title = "Swamp Monster Hub",
+    Desc = "There are currently some issues. We’re working on fixing them.",
+    Locked = true,
+    Callback = function()
+        run("https://pastefy.app/2tC7nRAK/raw")
+    end
+})
+
+---------- TAB 4 -----------
+
+local t4 = p2:Tab({
+    Title = "Hitbox / Troll",
+    Icon = "box",
+    Locked = false,
+})
+
+local RunService = game:GetService("RunService")
+local Player = game.Players.LocalPlayer
+
+-- Variables
+local HitboxSize = 10
+local HitboxTransparency = 0.8
+local TeamCheck = false
+local HitboxStatus = false
+local ToolsHitboxSize = 10
+local TypeHitbox = "Player"
+
+local rainbowConnection = nil
+local toolConnection = nil
+local toolHitboxConnection = nil
+local HitboxConnection = nil
+
+-- HSV to RGB converter function
+local function HSVToRGB(h, s, v)
+    local r, g, b
+    local i = math.floor(h * 6)
+    local f = h * 6 - i
+    local p = v * (1 - s)
+    local q = v * (1 - f * s)
+    local t = v * (1 - (1 - f) * s)
+    i = i % 6
+    if i == 0 then r, g, b = v, t, p
+    elseif i == 1 then r, g, b = q, v, p
+    elseif i == 2 then r, g, b = p, v, t
+    elseif i == 3 then r, g, b = p, q, v
+    elseif i == 4 then r, g, b = t, p, v
+    elseif i == 5 then r, g, b = v, p, q
+    end
+    return Color3.new(r, g, b)
+end
+
+-- Function to apply hitbox on tools
+local function applyHitbox(tool)
+    if tool:IsA("Tool") and tool:FindFirstChild("Handle") then
+        local handle = tool.Handle
+        handle.Massless = true
+        handle.Transparency = 1
+        handle.Size = Vector3.new(ToolsHitboxSize, ToolsHitboxSize, ToolsHitboxSize)
+
+        local selectionBox = Instance.new("SelectionBox")
+        selectionBox.Adornee = handle
+        selectionBox.Parent = handle
+
+        if rainbowConnection then
+            rainbowConnection:Disconnect()
+        end
+
+        rainbowConnection = RunService.RenderStepped:Connect(function()
+            local hue = (tick() % 5) / 5
+            selectionBox.Color3 = HSVToRGB(hue, 1, 1)
+        end)
+    end
+end
+
+-- Handle dropdown choice changes
+local function onDropdownChoice(choice)
+    if toolConnection then
+        toolConnection:Disconnect()
+        toolConnection = nil
+    end
+    if toolHitboxConnection then
+        toolHitboxConnection:Disconnect()
+        toolHitboxConnection = nil
+    end
+    if HitboxConnection then
+        HitboxConnection:Disconnect()
+        HitboxConnection = nil
+    end
+
+    -- Clear previous SelectionBoxes and reset transparency
+    for _, tool in ipairs(Player.Character:GetChildren()) do
+        if tool:IsA("Tool") and tool:FindFirstChild("Handle") then
+            for _, obj in ipairs(tool.Handle:GetChildren()) do
+                if obj:IsA("SelectionBox") then
+                    obj:Destroy()
+                end
+            end
+            tool.Handle.Transparency = 0
+        end
+    end
+
+    -- Reset other players' HumanoidRootPart
+    for _, v in ipairs(game.Players:GetPlayers()) do
+        if v ~= Player then
+            pcall(function()
+                local hrp = v.Character and v.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    hrp.Size = Vector3.new(2, 2, 1)
+                    hrp.Transparency = 1
+                    hrp.Color = Color3.new(0.5, 0.5, 0.5)
+                    hrp.Material = Enum.Material.Plastic
+                    hrp.CanCollide = false
+                end
+            end)
+        end
+    end
+
+    TypeHitbox = choice
+end
+
+-- Handle toggle hitbox status
+local function onToggleStatus(state)
+    if TypeHitbox == "Tools" then
+        if state then
+            -- Apply hitbox to existing tools
+            for _, tool in ipairs(Player.Character:GetChildren()) do
+                if tool:IsA("Tool") and tool:FindFirstChild("Handle") then
+                    applyHitbox(tool)
+                end
+            end
+
+            -- Listen for new tools
+            toolConnection = Player.Character.ChildAdded:Connect(function(child)
+                if child:IsA("Tool") and child:FindFirstChild("Handle") then
+                    applyHitbox(child)
+                end
+            end)
+
+            -- Check for tools missing SelectionBox
+            toolHitboxConnection = RunService.Heartbeat:Connect(function()
+                for _, tool in ipairs(Player.Character:GetChildren()) do
+                    if tool:IsA("Tool") and tool:FindFirstChild("Handle") then
+                        if not tool.Handle:FindFirstChildOfClass("SelectionBox") then
+                            applyHitbox(tool)
+                        end
+                    end
+                end
+            end)
+        else
+            -- Turn off tool hitbox
+            if toolConnection then
+                toolConnection:Disconnect()
+                toolConnection = nil
+            end
+            if toolHitboxConnection then
+                toolHitboxConnection:Disconnect()
+                toolHitboxConnection = nil
+            end
+            for _, tool in ipairs(Player.Character:GetChildren()) do
+                if tool:IsA("Tool") and tool:FindFirstChild("Handle") then
+                    for _, obj in ipairs(tool.Handle:GetChildren()) do
+                        if obj:IsA("SelectionBox") then
+                            obj:Destroy()
+                        end
+                    end
+                    tool.Handle.Transparency = 0
+                end
+            end
+        end
+    else
+        HitboxStatus = state
+
+        if HitboxConnection then
+            HitboxConnection:Disconnect()
+            HitboxConnection = nil
+        end
+
+        if state then
+            HitboxConnection = RunService.RenderStepped:Connect(function()
+                local rainbowHue = (tick() % 5) / 5
+                local rainbowColor = HSVToRGB(rainbowHue, 1, 1)
+                for _, v in ipairs(game.Players:GetPlayers()) do
+                    if v ~= Player then
+                        local sameTeam = (v.Team == Player.Team)
+                        if (TeamCheck and not sameTeam) or (not TeamCheck) then
+                            pcall(function()
+                                local hrp = v.Character and v.Character:FindFirstChild("HumanoidRootPart")
+                                if hrp then
+                                    hrp.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
+                                    hrp.Transparency = HitboxTransparency
+                                    hrp.Color = rainbowColor
+                                    hrp.Material = Enum.Material.Neon
+                                    hrp.CanCollide = false
+                                end
+                            end)
+                        end
+                    end
+                end
+            end)
+        else
+            for _, v in ipairs(game.Players:GetPlayers()) do
+                if v ~= Player then
+                    pcall(function()
+                        local hrp = v.Character and v.Character:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            hrp.Size = Vector3.new(2, 2, 1)
+                            hrp.Transparency = 1
+                            hrp.Color = Color3.new(0.5, 0.5, 0.5)
+                            hrp.Material = Enum.Material.Plastic
+                            hrp.CanCollide = false
+                        end
+                    end)
+                end
+            end
+        end
+    end
+end
+
+local Dropdown = t4:Dropdown({
+    Title = "Choose Hitbox",
+    Values = { "Player", "Tools"},
+    Value = "Player",
+    Callback = function(option) 
+        onDropdownChoice(option)
+    end
+})
+
+local Slider = t4:Slider({
+    Title = "Hitbox Size",
+    Step = 0.1,   
+    Value = {
+        Min = 1,
+        Max = 150,
+        Default = 10,
+    },
+    Callback = function(value)
+           HitboxSize = value
+            ToolsHitboxSize = value
+    end
+})
+
+local Slider = t4:Slider({
+    Title = "Hitbox Transparency",
+    Step = 0.01,   
+    Value = {
+        Min = 0,
+        Max = 1,
+        Default = 0.8,
+    },
+    Callback = function(value)
+        HitboxTransparency = value
+    end
+})
+
+local Toggle = t4:Toggle({
+    Title = "Team Check",
+    Desc = "Check Team ",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state) 
+        TeamCheck = state
+    end
+})
+
+local Toggle = t4:Toggle({
+    Title = "Hitbox Status",
+    Desc = "Hitbox Status ",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state) 
+        onToggleStatus(state)
+    end
+})
+
+local Section = t4:Section({ 
+    Title = "Script | Troll",
+    TextXAlignment = "Left",
+    TextSize = 17,
+})
+
+local Button = t4:Button({
+    Title = "DropKick Fling",
+    Desc = "Click For to Run Script",
+    Locked = false,
+    Callback = function()
+        run("https://vss.pandauth.com/kv/2aeedc82e25b53e3")
+    end
+})
+
+local Button = t4:Button({
+    Title = "TrollGui",
+    Desc = "Click For to Run Script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/Bysuskhmerops62/AVG/refs/heads/main/Fe%20Troll%20Fling")
+    end
+})
+
+local Button = t4:Button({
+    Title = "Auto Fling Player",
+    Desc = "There are currently some issues. We’re working on fixing them.",
+    Locked = true,
+    Callback = function()
+        run("https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Auto%20Fling%20Player")
+    end
+})
+
+local Button = t4:Button({
+    Title = "Touch Fling GUi",
+    Desc = "Click For to Run Script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/0Ben1/fe./main/Fling%20GUI")
+    end
+})
+
+local Button = t4:Button({
+    Title = "FE Fling Panel",
+    Desc = "Click For to Run Script",
+    Locked = false,
+    Callback = function()
+        load("FE Fling Panel.txt")
+    end
+})
+
+
+------ TAB 5 ------------
+
+local t5 = p2:Tab({
+    Title = "Game",
+    Icon = "gamepad-2",
+    Locked = false,
+})
+
+
+function AddGame(name)
+    local Section = t5:Section({ 
+    Title = name,
+    TextXAlignment = "Left",
+    TextSize = 25, 
+})
+end
+
+function AddScript(name, url)
+    local Button = t5:Button({
+    Title = name,
+    Desc = "Click For to Run Script",
+    Locked = false,
+    Callback = function()
+        if not url then
+            print("Url not have")
+        else
+            run(url)
+        end
+    end
+})
+end
+
+AddGame("Survive The Killer")
+AddScript("Survive The Killer", "https://raw.githubusercontent.com/bandmy00-droid/JohnyXstk/refs/heads/main/JxH.lua")
+
+AddGame("The Rake REMASTERED")
+AddScript("The Rake REMASTERED 1", "https://raw.githubusercontent.com/ScriptsLynX/LynX/main/KeySystem/Loader.lua")
+AddScript("The Rake REMASTERED 2", "https://raw.githubusercontent.com/Djskinybinn/The-Rake-Remastered-Script-Keyless/refs/heads/main/ObfuscatedRakeScript.lua")
+
+AddGame("The Floor Is LAVA")
+AddScript("The Floor Is LAVA", "https://pastebin.com/raw/yn39XZ6R")
+
+AddGame("Build a battle")
+AddScript("Build a battle 1", "https://rawscripts.net/raw/NUKE!-Build-and-Battle!-limnchhubRevorkTEST-240532")
+AddScript("Build a battle 2", "https://raw.githubusercontent.com/UhGbaaaa/Game-script-/main/Build%20a%20battle.txt")
+
+AddGame("elemental tycoon ")
+AddScript("elemental tycoon ", "https://raw.githubusercontent.com/dogwiener24/Elemental-powers-tycoon/refs/heads/main/elemental")
+-------- TAB 6 -------
+
+
+local t6 = p3:Tab({
+    Title = "Other",
+    Icon = "ethernet-port",
+    Locked = lock,
+})
+
+local gotopartDelay = 0.1
+local espTransparency = 0.3  
+local speaker = game.Players.LocalPlayer
+local espParts = {}
+local isEspEnabled = false
+local espColor = Color3.fromRGB(255, 0, 0)
+
+local function getRoot(char)
+    return char and char:FindFirstChild("HumanoidRootPart")
+end
+
+function AddESP(part)
+    if not (PartName and part:IsA("BasePart") and part.Name:lower() == PartName:lower()) then return end
+    if part:FindFirstChild(PartName.."_TextESP") then return end
+
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = PartName.."_TextESP"
+    billboard.Adornee = part
+    billboard.Size = UDim2.new(0, 150, 0, 40)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
+    billboard.LightInfluence = 0  -- UI មិនប្រើពន្លឺ
+    billboard.Parent = part
+
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Parent = billboard
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = part.Name
+    textLabel.TextColor3 = espColor or Color3.fromRGB(0, 255, 0)
+    textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+    textLabel.TextStrokeTransparency = 0.5
+    textLabel.TextScaled = true
+    textLabel.Font = Enum.Font.GothamBold
+end
+
+local PartName = ""
+local LoopGoto = false
+local LoopBring = false
+
+local Button = t6:Button({
+    Title = "Part Name",
+    Desc = "Click Run Script Get Part Name",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/bysuskhmerofficial/HelloKitty/refs/heads/main/PartName.lua.txt")
+    end
+})
+
+local Input = t6:Input({
+    Title = "Input Part Name",
+    Desc = "How Get Part name Click Script Part Name",
+    Value = "",
+    InputIcon = "",
+    Type = "Input", -- or "Textarea"
+    Placeholder = "Enter Partname...",
+    Callback = function(Value) 
+        PartName = Value
+        getgenv().PartName = Value
+    end
+})
+
+local Toggle = t6:Toggle({
+    Title = "Part ESP",
+    Desc = "part esp for show Direction",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state) 
+        isEspEnabled = state
+        if state then
+            if PartName and not table.find(espParts, PartName) then  
+                table.insert(espParts, PartName)  
+                for _, v in pairs(workspace:GetDescendants()) do  
+                    AddESP(v)
+                end  
+            end  
+        else
+            espParts = {}  
+            for _, part in pairs(workspace:GetDescendants()) do  
+                if part:IsA("BasePart") then  
+                    local adornment = part:FindFirstChild(PartName.."_TextESP")  
+                    if adornment then  
+                        adornment:Destroy()  
+                    end  
+                end  
+            end  
+        end
+    end
+})
+
+local Button = t6:Button({
+    Title = "Goto",
+    Desc = "Goto to Part",
+    Locked = false,
+    Callback = function()
+        for _, v in pairs(workspace:GetDescendants()) do
+            if getgenv().PartName and v.Name:lower() == getgenv().PartName:lower() and v:IsA("BasePart") then
+                local humanoid = speaker.Character and speaker.Character:FindFirstChildOfClass('Humanoid')
+                if humanoid and humanoid.SeatPart then
+                    humanoid.Sit = false
+                    wait(0.1)
+                end
+                wait(gotopartDelay or 0)
+                local root = getRoot(speaker.Character)
+                if root then
+                    root.CFrame = v.CFrame
+                end
+            end
+        end
+    end
+})
+
+local Toggle = t6:Toggle({
+    Title = "Loop Goto",
+    Desc = "Auto Goto",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(v) 
+        LoopGoto = v
+    end
+})
+
+local Button = t6:Button({
+    Title = "Bring",
+    Desc = "Bring Part",
+    Locked = false,
+    Callback = function()
+        for _, v in pairs(workspace:GetDescendants()) do
+            if getgenv().PartName and v.Name:lower() == getgenv().PartName:lower() and v:IsA("BasePart") then
+                local root = getRoot(speaker.Character)
+                if root then
+                    v.CFrame = root.CFrame
+                end
+            end
+        end
+    end
+})
+
+local Toggle = t6:Toggle({
+    Title = "Loop Bring",
+    Desc = "AutoBring",
+    Icon = ToggleUI,
+    Type = "Checkbox",
+    Default = false,
+    Callback = function(state) 
+        LoopBring = state
+    end
+})
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRoot = character:WaitForChild("HumanoidRootPart")
+
+local function Touch()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") and v.Name:lower() == (getgenv().PartName or ""):lower() then
+            firetouchinterest(humanoidRoot, v, 0)
+            firetouchinterest(humanoidRoot, v, 1)
+            task.wait(0.1) -- small delay to prevent spamming
+        end
+    end
+end
+
+t6:Button({
+    Title = "Touch",
+    Desc = "Be careful. Not support for executor",
+    Callback = function()
+        if typeof(firetouchinterest) ~= "function" then
+            WindUI:Notify({
+                Title = "Unsupported",
+                Content = "firetouchinterest not supported by this executor.",
+                Duration = 5
+            })
+            return
+        end
+        Touch()
+    end
+})
+
+workspace.DescendantAdded:Connect(function(part)
+    if not PartName or PartName == "" then return end
+    if not part:IsA("BasePart") then return end
+    if part.Name:lower() ~= PartName:lower() then return end
+
+    -- ESP
+    if isEspEnabled then
+        AddESP(part)
+    end
+
+    -- Goto
+    if LoopGoto then
+        task.delay(gotopartDelay or 0, function()
+            local humanoid = speaker.Character and speaker.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid and humanoid.SeatPart then
+                humanoid.Sit = false
+                task.wait(0.1)
+            end
+            local root = getRoot(speaker.Character)
+            if root then
+                root.CFrame = part.CFrame
+            end
+        end)
+    end
+
+    -- Bring
+    if LoopBring then
+        task.delay(0, function()
+            local root = getRoot(speaker.Character)
+            if root then
+                part.CFrame = root.CFrame
+            end
+        end)
+    end
+end)
+
+local Section = t6:Section({ 
+    Title = "Support",
+    TextXAlignment = "Left",
+    TextSize = 25, 
+})
+
+local Button = t6:Button({
+    Title = "Part Gui",
+    Desc = "Run Script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/GhostPlayer352/Test4/refs/heads/main/ScriptAuthorization%20Source")
+        Ioad("583e3bd54554f2bfdcd007a49fa6b035")
+    end
+})
+
+local Button = t6:Button({
+    Title = "position finder gui",
+    Desc = "Run Script",
+    Locked = false,
+    Callback = function()
+        run("https://pastebin.com/raw/BjViRedU")
+    end
+})
+
+
+local Button = t6:Button({
+    Title = "turtle spy",
+    Desc = "Run Script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/Bysuskhmerops62/script-/refs/heads/main/source.lua.txt")
+    end
+})
+
+
+local Button = t6:Button({
+    Title = "SimpleSpy",
+    Desc = "Run Script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/UhGbaaaa/Android-Value/main/SimpleSpyMobile.txt")
+    end
+})
+
+local Button = t6:Button({
+    Title = "OctoSpy",
+    Desc = "Run Script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/Bysuskhmerops62/script-/refs/heads/main/Octo%7ESpy.lua.txt")
+    end
+})
+
+local Button = t6:Button({
+    Title = "Gui Make",
+    Desc = "Run script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/Bysuskhmerops62/Key-System-/refs/heads/main/Gui%20Maker.txt")
+    end
+})
+
+local Section = t6:Section({ 
+    Title = "Tools",
+    TextXAlignment = "Left",
+    TextSize = 17, 
+})
+
+local Button = t6:Button({
+    Title = "Telekinesis",
+    Desc = "Run script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/Bysuskhmerops62/script-/refs/heads/main/qwerty11.lua.txt")
+    end
+})
+
+local Button = t6:Button({
+    Title = "F3X",
+    Desc = "Run script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/Bysuskhmerops62/script-/refs/heads/main/F3X.LUA.txt")
+    end
+})
+
+local Button = t6:Button({
+    Title = "Click Tp Normal",
+    Desc = "Run script",
+    Locked = false,
+    Callback = function()
+        mouse = game.Players.LocalPlayer:GetMouse()
+tool = Instance.new("Tool")
+tool.RequiresHandle = false
+tool.Name = "Click Teleport"
+tool.Activated:connect(function()
+local pos = mouse.Hit+Vector3.new(0,2.5,0)
+pos = CFrame.new(pos.X,pos.Y,pos.Z)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = pos
+end)
+tool.Parent = game.Players.LocalPlayer.Backpack
+    end
+})
+
+local Section = t6:Section({ 
+    Title = "Executor",
+    TextXAlignment = "Left",
+    TextSize = 17, 
+})
+
+
+local Button = t6:Button({
+    Title = "Arceus x",
+    Desc = "Run script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/Giangplay/Script/main/Arceus_X_V3.lua")
+    end
+})
+
+local Button = t6:Button({
+    Title = "Codex",
+    Desc = "Run script",
+    Locked = false,
+    Callback = function()
+        run("https://raw.githubusercontent.com/Giangplay/Script/main/Codex.lua")
+    end
+})
+
+-------- TAB 7 ----------
+
+local t7 = Playersction:Tab({
+    Title = "Player",
+    Icon = "user",
+    Locked = false,
+})
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local SelectedPlayerName = nil
+
+local Dropdown = t7:Dropdown({
+    Title = "Select Player",
+    Values = { "Loading..." },
+    Value = "Loading...",
+    Callback = function(option)
+        SelectedPlayerName = option
+    end
+})
+
+
+local function GetPlayerNames()
+    local names = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            table.insert(names, player.Name)
+        end
+    end
+    return names
+end
+
+-- Function update Dropdown values dynamically
+local function UpdateDropdown()
+    local players = GetPlayerNames()
+    if #players == 0 then
+        Dropdown:Refresh({ "No Players" })
+        SelectedPlayerName = nil
+    else
+        Dropdown:Refresh(players)
+        if not table.find(players, SelectedPlayerName) then
+            SelectedPlayerName = players[1]
+        end
+    end
+end
+
+-- Initial update
+UpdateDropdown()
+
+-- Update Dropdown នៅពេលមាន Player ចូល
+Players.PlayerAdded:Connect(function()
+    task.wait(0.1)
+    UpdateDropdown()
+end)
+
+-- Update Dropdown នៅពេលមាន Player ចាកចេញ
+Players.PlayerRemoving:Connect(function()
+    UpdateDropdown()
+end)
+
+local Button = t7:Button({
+    Title = "🔄 Refresh List",
+    Desc = "Manually refresh player list",
+    Locked = false,
+    Callback = function()
+        UpdateDropdown()
+    end
+})
+
+-- Button: Goto
+local Button = t7:Button({
+    Title = "Goto",
+    Desc = "Teleport to selected player",
+    Locked = false,
+    Callback = function()
+        if not SelectedPlayerName then return end
+
+        local target = Players:FindFirstChild(SelectedPlayerName)
+        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character then
+            LocalPlayer.Character:MoveTo(target.Character.HumanoidRootPart.Position)
+        end
+    end
+})
+
+-- Button: Bring
+local Button = t7:Button({
+    Title = "Bring",
+    Desc = "Bring selected player to you",
+    Locked = false,
+    Callback = function()
+        if not SelectedPlayerName then return end
+
+        local target = Players:FindFirstChild(SelectedPlayerName)
+        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and
+           LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            target.Character:MoveTo(LocalPlayer.Character.HumanoidRootPart.Position)
+        end
+    end
+})
+
+-------- TAB 8 ---------
+
+------ TAB 9 ------
+
+local t9 = p3:Tab({
+    Title = "Premium",
+    Icon = "crown",
+    Locked = false,
+})
+
+if premium or lock == false then
+
+local Section = t9:Section({ 
+    Title = "You Premium : " .. tostring(premium),
+    TextXAlignment = "Left",
+    TextSize = 17, -- Default Size
+})
+
+local Section = t9:Section({ 
+    Title = "Thank you for purchasing.",
+    TextXAlignment = "Left",
+    TextSize = 17, -- Default Size
+})
+
+else
+local Button = t9:Button({
+    Title = "Buy Premium 80 Robux",
+    Desc = "Click buy to copy link",
+    Locked = false,
+    Callback = function()
+        setclipboard("https://www.roblox.com/game-pass/1963837218")
+    end
+})
+
+local Paragraph = t9:Paragraph({
+    Title = " What Premium Gives:\n�Unlock Premium Tab\n� Unlock Premium Scripts",
+    Desc = " 80 Robux for Premium Access",
+    Color = "Blue",
+    Image = "",
+    ImageSize = 30,
+    Thumbnail = "",
+    ThumbnailSize = 80,
+    Locked = false,
+    Buttons = {
+        {
+            Icon = "shopping-cart",
+            Title = "Buy Now",
+            Callback = function()
+                setclipboard("https://www.roblox.com/game-pass/1963837218")
+            end,
+        }
+    }
+})
+
+end
+
+----- TAB 10 ------
+
+local t10 = p3:Tab({
+    Title = "Script Premium",
+    Icon = "gem",
+    Locked = lock,
+})
+
+local Button = t10:Button({
+    Title = "Destroy Delay",
+    Desc = "Click For To Load Script",
+    Locked = false,
+    Callback = function()
+        while task.wait(0.3) do
+                local hasChanged = false
+                
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") and v.HoldDuration ~= 0 then
+                        v.HoldDuration = 0
+                        hasChanged = true
+                    end
+                end
+                
+                if not hasChanged then
+                    task.wait(1)
+                end
+            end
+    end
+})
+
+
+local t11 = Playersction:Tab({
+    Title = "ESP",
+    Icon = "eye",
+    Locked = false,
+})
+
+-- ផ្ទុក ESP Module ជាមុន
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Exunys-ESP/main/src/ESP.lua"))()
+
+local Toggle = t11:Toggle({
+    Title = "Show ESP",
+    Type = "Checkbox",
+    Value = false,
+    Callback = function(state)
+        if state then
+            ESP.Load() 
+        else
+            ESP.UnwrapAll() 
+        end
+        print("ESP State: " .. tostring(state))
+    end
+})
+
+local Dropdown = t11:Dropdown({
+    Title = "Select Visuals",
+    Values = { "Box", "Tracer", "HeadDot", "HealthBar", "Skeleton", "Highlight", "Chams", "ESP" },
+    Value = { "Box", "HealthBar", "Tracer" },  -- default
+    Multi = true,
+    AllowNone = true,
+    Callback = function(option)
+        -- បង្កើត AllowedVisuals table ពី option ដែលបានជ្រើសរើស
+        local AllowedVisuals = {
+            ESP       = false,
+            Tracer    = false,
+            HeadDot   = false,
+            Box       = false,
+            HealthBar = false,
+            Skeleton  = false,
+            Highlight = false,
+            Chams     = false
+        }
+
+        -- បើកវិញចំពោះអ្វីដែល user ជ្រើសរើស
+        for _, name in ipairs(option) do
+            if AllowedVisuals[name] ~= nil then
+                AllowedVisuals[name] = true
+            end
+        end
+
+        ESP.UnwrapAll()
+        task.wait(0.1)
+
+        for _, plr in ipairs(game.Players:GetPlayers()) do
+            if plr ~= game.Players.LocalPlayer then
+                ESP.WrapObject(plr, nil, AllowedVisuals, 1000)
+            end
+        end
+
+        print("Visuals selected: " .. game:GetService("HttpService"):JSONEncode(option))
+    end
+})
+end
+
+
+GuiVEIL()
